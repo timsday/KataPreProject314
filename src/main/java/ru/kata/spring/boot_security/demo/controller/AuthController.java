@@ -57,8 +57,9 @@ public class AuthController {
 	}
 
 	@GetMapping("/logout")
-	public String logoutProcess(HttpServletRequest request, HttpServletResponse response) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	public String logoutProcess(HttpServletRequest request,
+								HttpServletResponse response,
+								Authentication auth) {
 		if (auth != null){
 			new SecurityContextLogoutHandler().logout(request, response, auth);
 		}

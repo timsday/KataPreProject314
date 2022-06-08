@@ -3,27 +3,30 @@ package ru.kata.spring.boot_security.demo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.dao.RoleRepository;
 import ru.kata.spring.boot_security.demo.dao.UserRepository;
 import ru.kata.spring.boot_security.demo.model.User;
+
 import java.util.List;
+import java.util.Objects;
 
 
 @Service
 public class UserServiceImpl implements UserService {
-
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RoleRepository roleService;
-
-    public UserServiceImpl() {
-    }
+    private BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public void save(User user) {
-        user.addRole(roleService.findRoleByRoleName("ROLE_USER"));
+        if (user.getPassword().length() != 60) { //already encoded - always 60 chars
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        } else { //rewrite to the previous password
+            user.setPassword(Objects.requireNonNull(
+                    userRepository.findById(user.getId()).get()).getPassword());
+        }
         userRepository.save(user);
     }
 
@@ -68,12 +71,5 @@ public class UserServiceImpl implements UserService {
         }
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(), user.getPassword(), user.getAuthorities());
-    }
-
-    @Override
-    public void addRole(User user, String roleName) {
-        if (roleName.equals("ROLE_USER") || roleName.equals("ROLE_ADMIN")) {
-            user.addRole(roleService.findRoleByRoleName(roleName));
-        }
     }
 }

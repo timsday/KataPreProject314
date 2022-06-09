@@ -9,7 +9,6 @@ import java.util.List;
 
 @Service
 public class RoleServiceImpl implements RoleService {
-
     @Autowired
     private RoleRepository roleRepository;
 
@@ -17,17 +16,14 @@ public class RoleServiceImpl implements RoleService {
     public void save(Role role) {
         roleRepository.save(role);
     }
-
     @Override
     public Role findRoleByRoleName(String role) {
         return roleRepository.findRoleByRoleName(role);
     }
-
     @Override
     public void delete(Role role) {
         roleRepository.delete(role);
     }
-
     @Override
     public List<Role> findAll() {
         return roleRepository.findAll();

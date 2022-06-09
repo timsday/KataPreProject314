@@ -11,7 +11,6 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.List;
 import java.util.Objects;
 
-
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
@@ -21,9 +20,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void save(User user) {
-        if (user.getPassword().length() != 60) { //already encoded - always 60 chars
+        if (user.getPassword().length() != 60) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else { //rewrite to the previous password
+        } else {
             user.setPassword(Objects.requireNonNull(
                     userRepository.findById(user.getId()).get()).getPassword());
         }
@@ -48,19 +47,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<User> findAll() {
         return userRepository.findAll().stream().toList();
-    }
-
-    @Override
-    public List<User> getSearchResultList(String keyword) {
-        return userRepository.findAll()
-                .stream()
-                .filter(user -> user.getUsername().equalsIgnoreCase(keyword)
-                        || user.getLastName().equalsIgnoreCase(keyword)
-                        || user.getEmail().equalsIgnoreCase(keyword)
-                        || user.getUsername().contains(keyword)
-                        || user.getLastName().contains(keyword)
-                        || user.getEmail().contains(keyword))
-                .toList();
     }
 
     @Override

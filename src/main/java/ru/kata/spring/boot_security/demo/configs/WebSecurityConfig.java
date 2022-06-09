@@ -12,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -26,8 +25,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                     .antMatchers("/signup/**", "/index", "/")
-                        .permitAll()
-                    .antMatchers("/resources/static/css/**", "/resources/static/js/**")
                         .permitAll()
                     .antMatchers("/user").hasAnyRole("ADMIN", "USER")
                     .antMatchers("/admin/**").hasRole("ADMIN")

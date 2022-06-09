@@ -28,7 +28,7 @@ public class InitService implements ApplicationRunner {
                         roleService.findRoleByRoleName("ROLE_USER"))));
         userService.save(new User("user",
                 "user",
-                (byte) 30,
+                (byte) 35,
                 "user@user.com",
                 "user"));
     }

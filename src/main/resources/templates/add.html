@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--Link for editor preview-->
     <link media="all" rel="stylesheet" href="/../static/css/bootstrap.min.css" type="text/css"/>
     <link media="all" rel="stylesheet" th:href="@{/css/bootstrap.min.css}" type="text/css"/>
     <title>New user</title>
@@ -22,26 +23,24 @@
                     th:text="${currentUser.getRolesNamesString()}"></h5>
             </div>
         </div>
-        <div class="col-2 text-right d-inline-block">
-            <a class="btn text-white-50 mb-1" href="/logout">
+        <form method="post" action="/logout" class="col-2 text-right d-inline-block">
+            <button type="submit" class="btn text-white-50 mb-1">
                 Logout
-            </a>
-        </div>
+            </button>
+            <input type="hidden"
+                   th:name="${_csrf.parameterName}"
+                   th:value="${_csrf.token}"/>
+        </form>
     </div>
     <!--Body-->
     <div class="row vh-100">
         <!--Left-panel-->
         <div class="col-2 pl-0 pr-0">
-            <div class="nav flex-column nav-pills mt-3" id="v-pills-tab"
-                 role="tablist" aria-orientation="vertical">
-                <a class="nav-link active" id="v-pills-home-tab"
-                   data-toggle="pill" href="/admin/users" role="tab"
-                   aria-controls="v-pills-home" aria-selected="true">Admin</a>
-                <a class="nav-link" id="v-pills-profile-tab"
-                   data-toggle="pill"
-                   href="/user" role="tab"
-                   aria-controls="v-pills-profile"
-                   aria-selected="false">User</a>
+            <div class="nav flex-column nav-pills mt-3"
+                 aria-orientation="vertical">
+                <a th:if="${currentUser.isAdmin}" class="nav-link active"
+                   href="/admin/users">Admin</a>
+                <a class="nav-link" href="/user">User</a>
             </div>
         </div>
         <!--Right-panel-->
@@ -88,11 +87,6 @@
                                             <input class="form-control"
                                                    id="username" type="text"
                                                    th:field="*{username}">
-                                            <!--<p class="alert alert-danger m-0"
-                                               role="alert"
-                                               th:if="${#fields.hasErrors('username')}"
-                                               th:errors="*{username}">Correct
-                                                length: 3 — 30 chars</p>-->
                                         </div>
 
                                         <div class="mb-3">
@@ -102,11 +96,6 @@
                                             <input class="form-control"
                                                    id="lastName" type="text"
                                                    th:field="*{lastName}">
-                                            <!-- <p class="alert alert-danger m-0"
-                                                role="alert"
-                                                th:if="${#fields.hasErrors('lastName')}"
-                                                th:errors="*{lastName}">Correct
-                                                 length: 3 — 30 chars</p>-->
                                         </div>
 
                                         <div class="mb-3">
@@ -115,11 +104,6 @@
                                             <input class="form-control"
                                                    id="age" type="number"
                                                    th:field="*{age}">
-                                            <!-- <p class="alert alert-danger m-0"
-                                                role="alert"
-                                                th:if="${#fields.hasErrors('age')}"
-                                                th:errors="*{age}">Correct
-                                                 age: 0 — 130</p>-->
                                         </div>
 
                                         <div class="mb-3">
@@ -128,11 +112,6 @@
                                             <input class="form-control"
                                                    id="email" type="email"
                                                    th:field="*{email}">
-                                            <!-- <p class="alert alert-danger m-0"
-                                                role="alert"
-                                                th:if="${#fields.hasErrors('email')}"
-                                                th:errors="*{email}">Please, type
-                                                 correct email</p>-->
                                         </div>
 
                                         <div class="mb-3">
@@ -141,10 +120,6 @@
                                             <input class="form-control"
                                                    id="password" type="password"
                                                    th:field="*{password}">
-                                            <!-- <p class="alert alert-danger m-0"
-                                                role="alert"
-                                                th:if="${#fields.hasErrors('password')}"
-                                                th:errors="*{password}">Min. 4 chars</p>-->
                                         </div>
 
                                         <div class="mb-4">
@@ -178,7 +153,8 @@
     </div>
 </div>
 <!-- Bootstrap components -->
-<script src="/../static/js/bootstrap.bundle.min.js"></script>
+<!--Link for editor preview-->
+<script src="/../static/js/jquery.slim.min.js"></script>
 <script src="/../static/js/bootstrap.bundle.min.js"></script>
 <script th:src="@{/js/jquery.slim.min.js}"></script>
 <script th:src="@{/js/bootstrap.bundle.min.js}"></script>

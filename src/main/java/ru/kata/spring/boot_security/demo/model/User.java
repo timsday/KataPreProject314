@@ -14,6 +14,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -58,7 +59,10 @@ public class User implements UserDetails {
            inverseJoinColumns = @JoinColumn(name = "role_id"))
    private Set<Role> roles;
 
-   public User() {
+   @Transient
+   private String[] stringRoles;
+
+      public User() {
    }
 
    public User(String username, String lastName, Byte age, String email, String password) {
@@ -114,21 +118,30 @@ public class User implements UserDetails {
    public void setRoles(Set<Role> roles) {
       this.roles = roles;
    }
+   public String[] getStringRoles() {
+      return stringRoles;
+   }
+   public void setStringRoles(String[] stringRoles) {
+      this.stringRoles = stringRoles;
+   }
 
    public boolean isAdmin() {
       return getRolesNamesString().contains("ADMIN");
    }
 
    public String getRolesNamesString() {
+      if (roles == null) {
+         return "";
+      }
       List<String> rolesNamesList = roles.stream()
               .map(Role::getRoleName)
-              .map(s -> s.replace("ROLE_", ""))
+              .map(s -> s.replace("ROLE_", " "))
               .toList();
       StringBuilder rolesNamesString = new StringBuilder();
       for (String roleName : rolesNamesList) {
-         rolesNamesString.append(" ").append(roleName);
+         rolesNamesString.append(roleName);
       }
-      return rolesNamesString.toString();
+      return rolesNamesString.toString().trim();
    }
 
    @Override

@@ -1,20 +1,21 @@
 package ru.kata.spring.boot_security.demo.service;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import java.util.Set;
 
-@Component
+@Service
 public class InitService implements ApplicationRunner {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private RoleService roleService;
+    private final UserService userService;
+    private final RoleService roleService;
+    public InitService(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     public void run(ApplicationArguments args) {
         roleService.save(new Role("ROLE_ADMIN"));
@@ -30,6 +31,7 @@ public class InitService implements ApplicationRunner {
                 "user",
                 (byte) 35,
                 "user@user.com",
-                "user"));
+                "user",
+                Set.of(roleService.findRoleByRoleName("ROLE_USER"))));
     }
 }

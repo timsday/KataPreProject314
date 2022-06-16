@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -23,14 +22,17 @@ import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminPanelController {
-	@Autowired
-	private UserService userService;
-	@Autowired
-	private RoleService roleService;
+public class AdminController {
+	private final UserService userService;
+	private final RoleService roleService;
+
+	public AdminController(UserService userService, RoleService roleService) {
+		this.userService = userService;
+		this.roleService = roleService;
+	}
 
 	@GetMapping( "/users")
-	public String printAllUsers(ModelMap model, Authentication auth) {
+	public String getUsers(ModelMap model, Authentication auth) {
 		model.addAttribute("currentUser",
 				userService.findUserByUsername(auth.getName()));
 		model.addAttribute("users", userService.findAll());
@@ -38,19 +40,19 @@ public class AdminPanelController {
 	}
 
 	@GetMapping("/add")
-	public String addUserForm(@ModelAttribute("newUser") User newUser, ModelMap model,
+	public String createUserForm(@ModelAttribute("newUser") User newUser, ModelMap model,
 							  Authentication auth) {
 		model.addAttribute("currentUser",
 				userService.findUserByUsername(auth.getName()));
 		return "add";
 	}
 
-	@PostMapping(value = "/addUser")
-	public String addUserProcess(@ModelAttribute("newUser") @Valid User newUser,
+	@PostMapping(value = "/users")
+	public String createUser(@ModelAttribute("newUser") @Valid User newUser,
 								 ServletRequest request) {
-		String[] selectedRoles = request.getParameterValues("selectedRoles");
-		if (selectedRoles != null) {
-			newUser.setRoles(Arrays.stream(selectedRoles)
+		String[] roles = request.getParameterValues("newRoles");
+		if (roles != null) {
+			newUser.setRoles(Arrays.stream(roles)
 					.map(roleService::findRoleByRoleName)
 					.collect(Collectors.toSet()));
 		}
@@ -58,12 +60,12 @@ public class AdminPanelController {
 		return "redirect:/admin/users";
 	}
 
-	@PutMapping(value = "/editUserProcess{id}")
-	public String editUserProcess(@ModelAttribute("user") @Valid User user,
+	@PutMapping(value = "/users{id}")
+	public String updateUser(@ModelAttribute("user") @Valid User user,
 								  ServletRequest request) {
-		String[] selectedRoles = request.getParameterValues("selectedRoles");
-		if (selectedRoles != null) {
-			user.setRoles(Arrays.stream(selectedRoles)
+		String[] roles = request.getParameterValues("editRoles");
+		if (roles != null) {
+			user.setRoles(Arrays.stream(roles)
 					.map(roleService::findRoleByRoleName)
 					.collect(Collectors.toSet()));
 		}
@@ -71,8 +73,8 @@ public class AdminPanelController {
 		return "redirect:/admin/users";
 	}
 
-	@DeleteMapping("/deleteUserProcess{id}")
-	public String deleteUserProcess(@PathVariable long id) {
+	@DeleteMapping("/users/{id}")
+	public String deleteUser(@PathVariable long id) {
 		userService.deleteByID(id);
 		return "redirect:/admin/users";
 	}

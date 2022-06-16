@@ -5,17 +5,18 @@ const userFetchService = {
         'Content-Type': 'application/json',
         'Referer': null
     },
-    findAllUsers: async () => await fetch('/api/users'),
+    findAllUsers: async () => await fetch(`/api/users`),
     findUserById: async (id) => await fetch(`/api/users/${id}`),
     findCurrentUser: async () => await fetch(`/api/user`),
-    saveUser: async (user) => await fetch('/api/users', {
+    saveUser: async (user) => await fetch(`/api/users`, {
         method: 'POST', headers: userFetchService.head, body: JSON.stringify(user)
     }),
     updateUser: async (user) => await fetch(`/api/users`, {
         method: 'PUT', headers: userFetchService.head, body: JSON.stringify(user)
     }),
     deleteUser: async (id) => await fetch(`/api/users/${id}`, {
-        method: 'DELETE', headers: userFetchService.head})
+        method: 'DELETE', headers: userFetchService.head
+    })
 }
 
 //Tabs onload filling
@@ -32,36 +33,36 @@ async function tbodyAllUsers() {
                 users.forEach(user => {
                     let userRow = `$(
                         <tr id="${user.id}" class="align-middle">
-                        <th class="align-middle">${user.id}</th>
-                        <td class="align-middle">${user.username}</td>
-                        <td class="align-middle">${user.lastName}</td>
-                        <td class="align-middle">${user.age}</td>
-                        <td class="align-middle">${user.email}</td>
-                        <td class="align-middle">${rolesNamesString(user.roles)}</td>
-                        <td class="align-middle">
-                            <button type="button"
-                                    class="btn btn-info"
-                                    data-toggle="modal"
-                                    data-target="#modalEdit"
-                                    onclick="editModalFilling(${user.id})"
-                                    data-tip="edit">Edit
-                            </button>
-                        </td>
-                        <td class="align-middle">
-                            <button type="button"
-                                    class="btn btn-danger"
-                                    data-toggle="modal"
-                                    data-target="#modalDelete"
-                                    onclick="deleteModalFilling(${user.id})"
-                                    data-tip="delete">Delete
-                            </button>
-                        </td>
+                            <th class="align-middle">${user.id}</th>
+                            <td class="align-middle">${user.username}</td>
+                            <td class="align-middle">${user.lastName}</td>
+                            <td class="align-middle">${user.age}</td>
+                            <td class="align-middle">${user.email}</td>
+                            <td class="align-middle">${rolesNamesString(user.roles)}</td>
+                            <td class="align-middle">
+                                <button type="button"
+                                        class="btn btn-info"
+                                        data-toggle="modal"
+                                        data-target="#modalEdit"
+                                        onclick="editModalFilling(${user.id})"
+                                        data-tip="edit">Edit
+                                </button>
+                            </td>
+                            <td class="align-middle">
+                                <button type="button"
+                                        class="btn btn-danger"
+                                        data-toggle="modal"
+                                        data-target="#modalDelete"
+                                        onclick="deleteModalFilling(${user.id})"
+                                        data-tip="delete">Delete
+                                </button>
+                            </td>
                         </tr>)`;
                     tbody.append(userRow);
-                })
+                });
             }
-        })
-    })
+        });
+    });
 }
 
 async function tbodyCurrentUser() {
@@ -71,16 +72,16 @@ async function tbodyCurrentUser() {
         res.json().then(user => {
             let userRow = `$(
                 <tr id="${user.id}">
-                <th class="align-middle">${user.id}</th>
-                <td class="align-middle">${user.username}</td>
-                <td class="align-middle">${user.lastName}</td>
-                <td class="align-middle">${user.age}</td>
-                <td class="align-middle">${user.email}</td>
-                <td class="align-middle">${rolesNamesString(user.roles)}</td>
+                    <th class="align-middle">${user.id}</th>
+                    <td class="align-middle">${user.username}</td>
+                    <td class="align-middle">${user.lastName}</td>
+                    <td class="align-middle">${user.age}</td>
+                    <td class="align-middle">${user.email}</td>
+                    <td class="align-middle">${rolesNamesString(user.roles)}</td>
                 </tr>)`;
             tbody.append(userRow);
-        })
-    })
+        });
+    });
 }
 
 //Roles column filling
@@ -88,7 +89,7 @@ function rolesNamesString(roles) {
     let rolesNamesString = '';
     roles.forEach(role => {
         rolesNamesString += role.roleName.replace('ROLE_', ' ');
-    })
+    });
     return rolesNamesString.trim();
 }
 
@@ -96,12 +97,6 @@ function rolesNamesString(roles) {
 function editModalFilling(id) {
     userFetchService.findUserById(id).then(res => {
         res.json().then(user => {
-            // document.getElementById('editId').value = user.id
-            // document.getElementById('editUsername').value = user.username
-            // document.getElementById('editLastName').value = user.lastName
-            // document.getElementById('editAge').value = user.age
-            // document.getElementById('editEmail').value = user.email
-            // document.getElementById('editPassword').value = user.password
             $("#editId").val(user.id);
             $("#editUsername").val(user.username);
             $("#editLastName").val(user.lastName);
@@ -115,12 +110,6 @@ function editModalFilling(id) {
 function deleteModalFilling(id) {
     userFetchService.findUserById(id).then(res => {
         res.json().then(user => {
-            // document.getElementById('deleteId').value = user.id
-            // document.getElementById('deleteUsername').value = user.username
-            // document.getElementById('deleteLastName').value = user.lastName
-            // document.getElementById('deleteAge').value = user.age
-            // document.getElementById('deleteEmail').value = user.email
-            // document.getElementById('deletePassword').value = user.password
             $("#deleteId").val(user.id);
             $("#deleteUsername").val(user.username);
             $("#deleteLastName").val(user.lastName);
@@ -136,7 +125,8 @@ document.querySelector('#currentUserLink')
     .addEventListener('click', async (e) => {
         $('#tabsPanel').hide();
         document.querySelector('#page-title').innerHTML = "User page";
-        document.querySelector('#right-column-title').innerHTML = "User information-page";
+        document.querySelector('#right-column-title')
+            .innerHTML = "User information-page";
     });
 
 document.querySelector('#adminLink')
@@ -166,11 +156,12 @@ document.querySelector('#editEventButton')
                     document.querySelector('#currentUserEmail')
                         .innerHTML = editUser.email;
                     document.querySelector('#currentUserRoles')
-                        .innerHTML = editUser.stringRoles.join(' ').replaceAll('ROLE_', '');
+                        .innerHTML = editUser.stringRoles.join(' ')
+                        .replaceAll('ROLE_', '');
                     await tbodyCurrentUser();
                 }
-            })
-        })
+            });
+        });
         await tbodyAllUsers();
     });
 
@@ -198,9 +189,3 @@ document.querySelector('#newUserSaveButton')
         await tbodyAllUsers();
         $('.nav-tabs a[href="#adminPanelTab"]').tab('show');
     });
-
-
-
-
-
-

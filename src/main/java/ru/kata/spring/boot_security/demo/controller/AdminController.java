@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 
 import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -16,6 +17,8 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -33,15 +36,18 @@ public class AdminController {
 
 	@GetMapping( "/users")
 	public String getUsers(ModelMap model, Authentication auth) {
-		model.addAttribute("currentUser",
-				userService.findUserByUsername(auth.getName()));
+		User currentUser = userService.findUserByUsername(auth.getName());
+		if (currentUser == null) {
+			return "redirect:/logout";
+		}
+		model.addAttribute("currentUser", currentUser);
 		model.addAttribute("users", userService.findAll());
 		return "users";
 	}
 
 	@GetMapping("/add")
-	public String createUserForm(@ModelAttribute("newUser") User newUser, ModelMap model,
-							  Authentication auth) {
+	public String createUserForm(@ModelAttribute("newUser") User newUser,
+								 ModelMap model, Authentication auth) {
 		model.addAttribute("currentUser",
 				userService.findUserByUsername(auth.getName()));
 		return "add";

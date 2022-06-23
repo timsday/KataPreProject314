@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ public class AdminController {
 	private final UserService userService;
 	private final RoleService roleService;
 
+	@Autowired
 	public AdminController(UserService userService, RoleService roleService) {
 		this.userService = userService;
 		this.roleService = roleService;

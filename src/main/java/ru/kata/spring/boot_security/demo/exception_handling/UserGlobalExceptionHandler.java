@@ -10,7 +10,8 @@ public class UserGlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<UserInvalidRequest> handleException(Exception exception){
-        UserInvalidRequest info = new UserInvalidRequest(); info.setInfo(exception.getMessage());
+        UserInvalidRequest info = new UserInvalidRequest();
+        info.setInfo(exception.getMessage());
         return new ResponseEntity<>(info, HttpStatus.BAD_REQUEST);
     }
 

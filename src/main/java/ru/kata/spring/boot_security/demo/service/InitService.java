@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.service;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.Set;
 public class InitService implements ApplicationRunner {
     private final UserService userService;
     private final RoleService roleService;
+    @Autowired
     public InitService(UserService userService, RoleService roleService) {
         this.userService = userService;
         this.roleService = roleService;

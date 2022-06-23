@@ -1,29 +1,30 @@
 package ru.kata.spring.boot_security.demo.configs;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import ru.kata.spring.boot_security.demo.service.UserService;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private UserService userService;
-    private SuccessUserHandler successUserHandler;
+    private final UserDetailsService userDetailsService;
+    private final SuccessUserHandler successUserHandler;
+    private final BCryptPasswordEncoder passwordEncoder;
     @Autowired
-    public void setUserService(UserService userService) {
-        this.userService = userService;
-    }
-    @Autowired
-    public void setSuccessUserHandler(SuccessUserHandler successUserHandler) {
+    public WebSecurityConfig(@Qualifier("userDetailsServiceIml")
+                                 UserDetailsService userDetailsService,
+                             SuccessUserHandler successUserHandler,
+                             BCryptPasswordEncoder passwordEncoder) {
+        this.userDetailsService = userDetailsService;
         this.successUserHandler = successUserHandler;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -36,12 +37,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         .hasAnyRole("ADMIN", "USER")
                     .antMatchers("/admin/**", "/api/**")
                         .hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                    .anyRequest().authenticated()
                     .and()
                 .formLogin()
                     .loginPage("/login")
                     .loginProcessingUrl("/login")
-                    .permitAll()
+                        .permitAll()
                 .successHandler(successUserHandler)
                     .permitAll()
                     .and()
@@ -50,7 +51,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .csrf()
                     .disable();
-
     }
 
     @Override
@@ -59,22 +59,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/css/**", "/js/**");
     }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(12);
-    }
-
-    @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userService);
-        authProvider.setPasswordEncoder(passwordEncoder());
-        return authProvider;
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-
+    @Autowired
+    public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
     }
 }

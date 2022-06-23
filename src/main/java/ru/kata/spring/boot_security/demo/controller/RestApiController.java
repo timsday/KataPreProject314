@@ -2,6 +2,7 @@ package ru.kata.spring.boot_security.demo.controller;
 
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,6 +28,7 @@ public class RestApiController {
 	private final UserService userService;
 	private final RoleService roleService;
 
+	@Autowired
 	public RestApiController(UserService userService, RoleService roleService) {
 		this.userService = userService;
 		this.roleService = roleService;

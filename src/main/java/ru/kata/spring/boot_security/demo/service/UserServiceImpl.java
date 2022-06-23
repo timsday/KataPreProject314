@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.dao.UserRepository;
@@ -14,8 +13,9 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
-
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
+    @Autowired
+    public UserServiceImpl(UserRepository userRepository,
+                           BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -51,13 +51,4 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream().toList();
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = findUserByUsername(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("User " + username + " not found");
-        }
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(), user.getPassword(), user.getAuthorities());
-    }
 }
